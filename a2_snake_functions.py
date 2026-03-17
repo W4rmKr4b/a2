@@ -1,20 +1,60 @@
-"""Core Snake game helper functions for Assignment 2."""
+"""CSCA08: Winter 2026 -- Assignment 2: Snake Game
 
-from constants import UP, DOWN, LEFT, RIGHT
+This code is provided solely for the personal and private use of
+students taking the CSCA08 course at the University of
+Toronto. Copying for purposes other than this use is expressly
+prohibited. All forms of distribution of this code, whether as given
+or with any changes, are expressly prohibited.
+
+All of the files in this directory and all subdirectories are:
+Copyright (c) 2026 University of Toronto.
+All rights reserved. For use at the University of Toronto only.
+
+Prepared by Yimo Ning, with contributions from Javane Rostampoor,
+Akshay Bapat, and the CSCA08 teaching assistant team.
+
+Course Acknowledgement: Mario Badr, Jennifer Campbell, Tom Fairgrieve,
+Diane Horton, Michael Liut, Jacqueline Smith, Anya Tafliovich, Paul Gries,
+Andrew Petersen, Purva Gawde, Irene Huang and others.
+
+"""
+
+from constants import (
+    DOWN,
+    EMPTY,
+    FOOD,
+    HEAD,
+    LEFT,
+    RIGHT,
+    SNAKE_BODY,
+    UP,
+)
 
 
 def make_board(width, height):
-    """Return a board of '.' cells with dimensions height x width.
+        """Return a new board with width columns and height rows.
+    The returned board is a nested list of strings filled with the
+    character ".". The board uses row-major layout:
+    board[y][x] refers to column x in row y.
+
+    The board contains exactly height rows, and each row contains
+    exactly width columns.
+
+    If width == 0 or height == 0, return [].
+
+    Preconditions:
+    - width >= 0
+    - height >= 0
 
     >>> make_board(3, 2)
     [['.', '.', '.'], ['.', '.', '.']]
-    >>> make_board(0, 2)
-    []
     """
     if width == 0 or height == 0:
         return []
     return [["."] * width for _ in range(height)]
 
+# =======Add the rest of functions here=========
+# ===================================
 
 def clear_board(board):
     """Mutate board so every position becomes '.'.
@@ -166,3 +206,10 @@ def would_collide_after_move(snake_xs, snake_ys, dx, dy, width, height):
         if snake_xs[i] == next_x and snake_ys[i] == next_y:
             return True
     return False
+
+if __name__ == "__main__":
+    """The code below reads your doctests and checks correctness.
+    Do not change Below code!!"""
+    import doctest
+    doctest.testmod()
+
