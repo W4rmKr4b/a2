@@ -31,7 +31,7 @@ from constants import (
 )
 
 
-def make_board(width, height):
+def make_board(width: int, height: int) -> list[list[str]]:
         """Return a new board with width columns and height rows.
     The returned board is a nested list of strings filled with the
     character ".". The board uses row-major layout:
@@ -56,7 +56,7 @@ def make_board(width, height):
 # =======Add the rest of functions here=========
 # ===================================
 
-def clear_board(board):
+def clear_board(board: list[list[str]]) -> None:
     """Mutate board so every position becomes '.'.
 
     >>> b = [['H', 'F'], ['S', '.']]
@@ -69,7 +69,7 @@ def clear_board(board):
             board[y][x] = "."
 
 
-def place_snake_and_food(board, snake, food):
+def place_snake_and_food(board: list[list[str]], snake: list[list[int]], food: list[int]) -> None:
     """Clear board, then place snake and food.
 
     Snake is [[x, y], ...] where index 0 is head.
@@ -92,7 +92,7 @@ def place_snake_and_food(board, snake, food):
         board[food_y][food_x] = "F"
 
 
-def board_to_string(board):
+def board_to_string(board: list[list[str]]) -> str:
     """Return board as lines of space-separated cells.
 
     >>> board_to_string([['H', '.'], ['S', 'F']])
@@ -101,7 +101,7 @@ def board_to_string(board):
     return "\n".join(" ".join(row) for row in board)
 
 
-def snake_as_pairs(snake_xs, snake_ys):
+def snake_as_pairs(snake_xs: list[int], snake_ys: list[int]) -> list[list[int]]:
     """Return [[x, y], ...] representation from coordinate lists.
 
     >>> snake_as_pairs([2, 1, 0], [0, 0, 0])
@@ -110,7 +110,7 @@ def snake_as_pairs(snake_xs, snake_ys):
     return [[snake_xs[i], snake_ys[i]] for i in range(len(snake_xs))]
 
 
-def check_self_collision(snake_xs, snake_ys):
+def check_self_collision(snake_xs: list[int], snake_ys: list[int]) -> bool:
     """Return True if snake head overlaps its body.
 
     >>> check_self_collision([1, 1, 2], [2, 2, 2])
@@ -128,7 +128,7 @@ def check_self_collision(snake_xs, snake_ys):
     return False
 
 
-def move_snake(snake_xs, snake_ys, dx, dy, width, height, food):
+def move_snake(snake_xs: list[int], snake_ys: list[int], dx: int, dy: int, width: int, height: int, food: list[int]) -> bool:
     """Move snake by one step with wrap-around.
 
     Mutates snake_xs/snake_ys and returns True if food was eaten.
@@ -163,7 +163,7 @@ def move_snake(snake_xs, snake_ys, dx, dy, width, height, food):
     return ate_food
 
 
-def update_direction(curr_dx, curr_dy, key):
+def update_direction(curr_dx: int, curr_dy: int, key: str) -> list[int]:
     """Return updated [dx, dy] from key, blocking reverse turns.
 
     >>> update_direction(1, 0, UP)
@@ -191,7 +191,7 @@ def update_direction(curr_dx, curr_dy, key):
     return [new_dx, new_dy]
 
 
-def would_collide_after_move(snake_xs, snake_ys, dx, dy, width, height):
+def would_collide_after_move(snake_xs: list[int], snake_ys: list[int], dx: int, dy: int, width: int, height: int) -> bool:
     """Return True if next wrapped head position hits current body.
 
     >>> would_collide_after_move([4, 3], [0, 0], -1, 0, 10, 10)
