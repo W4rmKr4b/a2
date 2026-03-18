@@ -32,7 +32,7 @@ from constants import (
 
 
 def make_board(width: int, height: int) -> list[list[str]]:
-        """Return a new board with width columns and height rows.
+    """Return a new board with width columns and height rows.
     The returned board is a nested list of strings filled with the
     character ".". The board uses row-major layout:
     board[y][x] refers to column x in row y.
@@ -51,10 +51,13 @@ def make_board(width: int, height: int) -> list[list[str]]:
     """
     if width == 0 or height == 0:
         return []
-    return [["."] * width for _ in range(height)]
+    else:
+        board = [["."] * width for i in range(height)]
+        return board
 
 # =======Add the rest of functions here=========
 # ===================================
+
 
 def clear_board(board: list[list[str]]) -> None:
     """Mutate board so every position becomes '.'.
@@ -69,8 +72,10 @@ def clear_board(board: list[list[str]]) -> None:
             board[y][x] = "."
 
 
-def place_snake_and_food(board: list[list[str]], snake: list[list[int]], food: list[int]) -> None:
-    """Clear board, then place snake and food.
+def place_snake_and_food(board: list[list[str]], 
+                         snake: list[list[int]], 
+                         food: list[int]) -> None:
+    """Clear board, then place snake and food at the specified coordinates.
 
     Snake is [[x, y], ...] where index 0 is head.
 
@@ -78,49 +83,58 @@ def place_snake_and_food(board: list[list[str]], snake: list[list[int]], food: l
     >>> place_snake_and_food(b, [[1, 1], [0, 1], [0, 2]], [3, 0])
     >>> b
     [['.', '.', '.', 'F'], ['S', 'H', '.', '.'], ['S', '.', '.', '.']]
+
+    precondition: snake and food must be nonempty.
     """
     clear_board(board)
 
-    if snake:
-        head_x, head_y = snake[0]
-        board[head_y][head_x] = "H"
-        for x, y in snake[1:]:
-            board[y][x] = "S"
+    
+    head_x = snake[0][0]
+    head_y = snake[0][1]
+                             
+    board[head_y][head_x] = "H"
+    for x, y in snake[1:]:
+        board[y][x] = "S"
 
-    if food:
-        food_x, food_y = food
-        board[food_y][food_x] = "F"
+    food_x = food[0]
+    food_y = food[1]
+    board[food_y][food_x] = "F"
 
 
 def board_to_string(board: list[list[str]]) -> str:
-    """Return board as lines of space-separated cells.
-
-    >>> board_to_string([['H', '.'], ['S', 'F']])
-    'H .\\nS F'
+    """Firstly we turn each column into a comma seperated string, 
+    Then we join each row with a newline so that we get a grid representation 
+    of the board as a string. 
     """
-    return "\n".join(" ".join(row) for row in board)
+    return "\n".join(" ".join(col) for col in board)
 
 
 def snake_as_pairs(snake_xs: list[int], snake_ys: list[int]) -> list[list[int]]:
-    """Return [[x, y], ...] representation from coordinate lists.
+    """Given a list (snake_xs) of x coordinates for each segment of the snake, and a list
+    of y coordinates (snake_ys) pair up each x with a y coordinate according to how they appear 
+    in parallel in each list. 
 
-    >>> snake_as_pairs([2, 1, 0], [0, 0, 0])
-    [[2, 0], [1, 0], [0, 0]]
+    >>> snake_as_pairs([5, 4, 3], [2, 2, 2])
+    [[5, 2], [4, 2], [3, 2]]
+
+    precondition: len(snake_xs) == len(snake_ys)
+    Note: I had learned this slick list/string builder notation from stack exchange, I dont recall 
+    it being used in class, but it ended up being very useful for this project.
     """
+    
     return [[snake_xs[i], snake_ys[i]] for i in range(len(snake_xs))]
 
 
 def check_self_collision(snake_xs: list[int], snake_ys: list[int]) -> bool:
-    """Return True if snake head overlaps its body.
+    """Return True if snake head overlaps its body. Specifially by identifying the 
+    head, and checking the rest of the coordinate pairs to see if they match the head. 
+    It parses the snake_xs and snake_ys to locate the parts of the snakeon the board.
 
     >>> check_self_collision([1, 1, 2], [2, 2, 2])
     True
     >>> check_self_collision([1, 2, 3], [2, 2, 2])
     False
     """
-    if not snake_xs:
-        return False
-
     head = (snake_xs[0], snake_ys[0])
     for i in range(1, len(snake_xs)):
         if (snake_xs[i], snake_ys[i]) == head:
@@ -128,10 +142,14 @@ def check_self_collision(snake_xs: list[int], snake_ys: list[int]) -> bool:
     return False
 
 
-def move_snake(snake_xs: list[int], snake_ys: list[int], dx: int, dy: int, width: int, height: int, food: list[int]) -> bool:
+def move_snake(snake_xs: list[int], snake_ys: list[int], 
+               dx: int, dy: int, width: int, 
+               height: int, food: list[int]) -> bool:
     """Move snake by one step with wrap-around.
 
     Mutates snake_xs/snake_ys and returns True if food was eaten.
+
+    Otherwise if food was not eaten, return false and continue as normal.
 
     >>> xs, ys = [2, 1, 0], [0, 0, 0]
     >>> move_snake(xs, ys, 1, 0, 5, 5, [4, 4])
@@ -148,9 +166,9 @@ def move_snake(snake_xs: list[int], snake_ys: list[int], dx: int, dy: int, width
     new_head_x = (snake_xs[0] + dx) % width
     new_head_y = (snake_ys[0] + dy) % height
 
-    ate_food = [new_head_x, new_head_y] == food
+    ate_food = [new_head_x, new_head_y]
 
-    if ate_food:
+    if ate_food == food:
         snake_xs.insert(0, new_head_x)
         snake_ys.insert(0, new_head_y)
     else:
@@ -191,7 +209,10 @@ def update_direction(curr_dx: int, curr_dy: int, key: str) -> list[int]:
     return [new_dx, new_dy]
 
 
-def would_collide_after_move(snake_xs: list[int], snake_ys: list[int], dx: int, dy: int, width: int, height: int) -> bool:
+def would_collide_after_move(snake_xs: list[int], 
+                             snake_ys: list[int], 
+                             dx: int, dy: int, 
+                             width: int, height: int) -> bool:
     """Return True if next wrapped head position hits current body.
 
     >>> would_collide_after_move([4, 3], [0, 0], -1, 0, 10, 10)
@@ -207,9 +228,9 @@ def would_collide_after_move(snake_xs: list[int], snake_ys: list[int], dx: int, 
             return True
     return False
 
+
 if __name__ == "__main__":
     """The code below reads your doctests and checks correctness.
     Do not change Below code!!"""
     import doctest
     doctest.testmod()
-
