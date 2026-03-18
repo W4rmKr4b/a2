@@ -1,74 +1,44 @@
-def make_board(width, height):
-    board = []
-    for row in range(height):
-        new_row = []
-        for col in range(width):
-            new_row.append(' ')
-        board.append(new_row)
-    return board
+# Functions for Snake Game
+
+from constants import EMPTY, FOOD, HEAD, SNAKE_BODY
 
 
-def board_to_string(board):
-    str_board = ''
-    for row in board:
-        str_board += ''.join(row) + '\n'
-    return str_board
-
-
-def snake_as_pairs(snake):
-    pairs = []
-    for index in range(len(snake)):
-        pairs.append((snake[index][0], snake[index][1]))
-    return pairs
+def initial_snake():
+    """Returns the starting position of the snake as a list of coordinates."""
+    return [(5, 5), (5, 4), (5, 3)]
 
 
 def move_snake(snake, direction):
-    head_x = snake[0][0]
-    head_y = snake[0][1]
-
+    """Moves the snake in the specified direction (up, down, left, right)."""
+    head = snake[0]
     if direction == 'up':
-        new_head = (head_x, head_y - 1)
+        new_head = (head[0] - 1, head[1])
     elif direction == 'down':
-        new_head = (head_x, head_y + 1)
+        new_head = (head[0] + 1, head[1])
     elif direction == 'left':
-        new_head = (head_x - 1, head_y)
+        new_head = (head[0], head[1] - 1)
     elif direction == 'right':
-        new_head = (head_x + 1, head_y)
-
-    snake.insert(0, new_head)
-    return snake
-
-
-def update_direction(current_direction, new_direction):
-    if (current_direction == 'up' and new_direction != 'down') or  
-       (current_direction == 'down' and new_direction != 'up') or  
-       (current_direction == 'left' and new_direction != 'right') or  
-       (current_direction == 'right' and new_direction != 'left'):
-        return new_direction
-    return current_direction
+        new_head = (head[0], head[1] + 1)
+    else:
+        raise ValueError("Invalid direction")
+    return [new_head] + snake[:-1]
 
 
-def would_collide_after_move(snake, board, direction):
-    head_x = snake[0][0]
-    head_y = snake[0][1]
-    if direction == 'up':
-        head_y -= 1
-    elif direction == 'down':
-        head_y += 1
-    elif direction == 'left':
-        head_x -= 1
-    elif direction == 'right':
-        head_x += 1
+def grow_snake(snake):
+    """Adds a segment to the snake's tail."""
+    return snake + [snake[-1]]
 
-    # Check for collision with borders
-    if head_x < 0 or head_x >= len(board[0]):
+
+def check_collision(snake, position):
+    """Checks if the snake collides with itself or the walls."""
+    if position in snake:
         return True
-    if head_y < 0 or head_y >= len(board):
+    head = snake[0]
+    if head[0] < 0 or head[0] >= 10 or head[1] < 0 or head[1] >= 10:
         return True
-
-    # Check for collision with self
-    for segment in snake[1:]:
-        if segment[0] == head_x and segment[1] == head_y:
-            return True
-
     return False
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
