@@ -21,12 +21,8 @@ Andrew Petersen, Purva Gawde, Irene Huang and others.
 
 from constants import (
     DOWN,
-    EMPTY,
-    FOOD,
-    HEAD,
     LEFT,
     RIGHT,
-    SNAKE_BODY,
     UP,
 )
 
@@ -68,8 +64,8 @@ def clear_board(board: list[list[str]]) -> None:
             board[y][x] = "."
 
 
-def place_snake_and_food(board: list[list[str]], 
-                         snake: list[list[int]], 
+def place_snake_and_food(board: list[list[str]],
+                         snake: list[list[int]],
                          food: list[int]) -> None:
     """Clear board, then place snake and food at the specified coordinates.
 
@@ -96,33 +92,31 @@ def place_snake_and_food(board: list[list[str]],
 
 
 def board_to_string(board: list[list[str]]) -> str:
-    """Firstly we turn each column into a comma seperated string, 
-    Then we join each row with a newline so that we get a grid representation 
-    of the board as a string. 
+    """Firstly we turn each column into a comma separated string.
+    Then we join each row with a newline so that we get a grid
+    representation of the board as a string.
     """
     return "\n".join(" ".join(row) for row in board)
 
 
-def snake_as_pairs(snake_xs: list[int], snake_ys: list[int]) -> list[list[int]]:
-    """Given a list (snake_xs) of x coordinates for each segment of the snake, and a list
-    of y coordinates (snake_ys) pair up each x with a y coordinate according to how they appear 
-    in parallel in each list. 
+def snake_as_pairs(snake_xs: list[int],
+                   snake_ys: list[int]) -> list[list[int]]:
+    """Pair each x-coordinate in snake_xs with the y-coordinate in snake_ys.
 
     >>> snake_as_pairs([5, 4, 3], [2, 2, 2])
     [[5, 2], [4, 2], [3, 2]]
 
     precondition: len(snake_xs) == len(snake_ys)
-    Note: I had learned this slick list/string builder notation from stack exchange, I dont recall 
-    it being used in class, but it ended up being very useful for this project.
     """
 
     return [[snake_xs[i], snake_ys[i]] for i in range(len(snake_xs))]
 
 
 def check_self_collision(snake_xs: list[int], snake_ys: list[int]) -> bool:
-    """Return True if snake head overlaps its body. Specifially by identifying the 
-    head, and checking the rest of the coordinate pairs to see if they match the head. 
-    It parses the snake_xs and snake_ys to locate the parts of the snakeon the board.
+    """Return True if snake head overlaps its body.
+
+    Identify the head and check whether any body segment shares
+    the same coordinate.
 
     >>> check_self_collision([1, 1, 2], [2, 2, 2])
     True
@@ -139,17 +133,19 @@ def check_self_collision(snake_xs: list[int], snake_ys: list[int]) -> bool:
     return False
 
 
-def move_snake(snake_xs: list[int], snake_ys: list[int], 
-               dx: int, dy: int, width: int, 
+def move_snake(snake_xs: list[int], snake_ys: list[int],
+               dx: int, dy: int, width: int,
                height: int, food: list[int]) -> bool:
     """Move the snake forward by one step on a grid with wrap-around.
 
     The snake's position is represented by two parallel lists:
     `snake_xs` and `snake_ys`, where each index corresponds to a segment
-    of the snake's body, and index 0 is the head. The snake moves by adding (dx, dy) to the head position. If the new
-    head position goes beyond the grid boundaries, it wraps around using
-    modulo arithmetic with the given width and height and if the food was eaten (head index matches food index)
-    then the snake grows by one segment.
+    of the snake's body, and index 0 is the head. The snake moves by
+    adding (dx, dy) to the head position. If the new head position
+    goes beyond the grid boundaries, it wraps around using modulo
+    arithmetic with the given width and height. If food was eaten
+    (head index matches food index), then the snake grows by one
+    segment.
 
     Otherwise if food was not eaten, return false and continue as normal.
 
@@ -211,9 +207,9 @@ def update_direction(curr_dx: int, curr_dy: int, key: str) -> list[int]:
     return [new_dx, new_dy]
 
 
-def would_collide_after_move(snake_xs: list[int], 
-                             snake_ys: list[int], 
-                             dx: int, dy: int, 
+def would_collide_after_move(snake_xs: list[int],
+                             snake_ys: list[int],
+                             dx: int, dy: int,
                              width: int, height: int) -> bool:
     """Return True if next wrapped head position hits current body.
 
