@@ -145,9 +145,14 @@ def check_self_collision(snake_xs: list[int], snake_ys: list[int]) -> bool:
 def move_snake(snake_xs: list[int], snake_ys: list[int], 
                dx: int, dy: int, width: int, 
                height: int, food: list[int]) -> bool:
-    """Move snake by one step with wrap-around.
+    """Move the snake forward by one step on a grid with wrap-around.
 
-    Mutates snake_xs/snake_ys and returns True if food was eaten.
+    The snake's position is represented by two parallel lists:
+    `snake_xs` and `snake_ys`, where each index corresponds to a segment
+    of the snake's body, and index 0 is the head. The snake moves by adding (dx, dy) to the head position. If the new
+    head position goes beyond the grid boundaries, it wraps around using
+    modulo arithmetic with the given width and height and if the food was eaten (head index matches food index)
+    then the snake grows by one segment.
 
     Otherwise if food was not eaten, return false and continue as normal.
 
