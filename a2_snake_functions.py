@@ -30,7 +30,6 @@ from constants import (
     UP,
 )
 
-
 def make_board(width: int, height: int) -> list[list[str]]:
     """Return a new board with width columns and height rows.
     The returned board is a nested list of strings filled with the
@@ -51,16 +50,13 @@ def make_board(width: int, height: int) -> list[list[str]]:
     """
     if width == 0 or height == 0:
         return []
-    else:
-        board = [["."] * width for i in range(height)]
-        return board
+    return [["."] * width for _ in range(height)]
 
 # =======Add the rest of functions here=========
 # ===================================
 
-
 def clear_board(board: list[list[str]]) -> None:
-    """Mutate board so every position becomes '.'.
+    """Mutate board so every position becomes ".".
 
     >>> b = [['H', 'F'], ['S', '.']]
     >>> clear_board(b)
@@ -88,17 +84,15 @@ def place_snake_and_food(board: list[list[str]],
     """
     clear_board(board)
 
-    
-    head_x = snake[0][0]
-    head_y = snake[0][1]
-                             
-    board[head_y][head_x] = "H"
-    for x, y in snake[1:]:
-        board[y][x] = "S"
+    if snake:
+        head_x, head_y = snake[0]
+        board[head_y][head_x] = "H"
+        for x, y in snake[1:]:
+            board[y][x] = "S"
 
-    food_x = food[0]
-    food_y = food[1]
-    board[food_y][food_x] = "F"
+    if food:
+        food_x, food_y = food
+        board[food_y][food_x] = "F"
 
 
 def board_to_string(board: list[list[str]]) -> str:
@@ -106,7 +100,7 @@ def board_to_string(board: list[list[str]]) -> str:
     Then we join each row with a newline so that we get a grid representation 
     of the board as a string. 
     """
-    return "\n".join(" ".join(col) for col in board)
+    return "\n".join(" ".join(row) for row in board)
 
 
 def snake_as_pairs(snake_xs: list[int], snake_ys: list[int]) -> list[list[int]]:
@@ -121,7 +115,7 @@ def snake_as_pairs(snake_xs: list[int], snake_ys: list[int]) -> list[list[int]]:
     Note: I had learned this slick list/string builder notation from stack exchange, I dont recall 
     it being used in class, but it ended up being very useful for this project.
     """
-    
+
     return [[snake_xs[i], snake_ys[i]] for i in range(len(snake_xs))]
 
 
@@ -135,6 +129,9 @@ def check_self_collision(snake_xs: list[int], snake_ys: list[int]) -> bool:
     >>> check_self_collision([1, 2, 3], [2, 2, 2])
     False
     """
+    if not snake_xs:
+        return False
+
     head = (snake_xs[0], snake_ys[0])
     for i in range(1, len(snake_xs)):
         if (snake_xs[i], snake_ys[i]) == head:
@@ -171,9 +168,9 @@ def move_snake(snake_xs: list[int], snake_ys: list[int],
     new_head_x = (snake_xs[0] + dx) % width
     new_head_y = (snake_ys[0] + dy) % height
 
-    ate_food = [new_head_x, new_head_y]
+    ate_food = [new_head_x, new_head_y] == food
 
-    if ate_food == food:
+    if ate_food:
         snake_xs.insert(0, new_head_x)
         snake_ys.insert(0, new_head_y)
     else:
